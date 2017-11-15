@@ -40,6 +40,7 @@ class ScreenOneFragment : Fragment() {
                         .child(etxt_id.text.trim().toString())
                         .setValue(user)
                 Snackbar.make(view1, "Data saved successfully", Snackbar.LENGTH_SHORT).show()
+                (activity as MainActivity).switchFragment(ScreenTwoFragment(),"secondFragment")
             }else
                 Snackbar.make(view1, "Please fill all the details",Snackbar.LENGTH_SHORT).show()
         }
