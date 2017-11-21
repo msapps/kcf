@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import msapps.android.app.kcf.firebaseMappingClasses.Hobbies
 class ScreenTwoFragment : Fragment() {
     lateinit var view1 : View
     lateinit var rv_hobbies : RecyclerView
+    var selectedHobbyList : ArrayList<String> = arrayListOf()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -37,6 +39,23 @@ class ScreenTwoFragment : Fragment() {
         var hobbiesAdapter = object : FirebaseRecyclerAdapter<Hobbies, HobbiesSelectionViewHolder>(options){
             override fun onBindViewHolder(holder: HobbiesSelectionViewHolder?, position: Int, model: Hobbies?) {
                 holder?.bind(model)
+                holder?.itemView?.setOnClickListener{
+                    var isVisible = if(holder.imgTick.visibility == View.GONE){
+                        holder.imgTick.visibility = View.VISIBLE
+                        false
+                    }else{
+                        holder.imgTick.visibility = View.GONE
+                        true
+                    }
+                    if(isVisible){
+                        if(selectedHobbyList != null && selectedHobbyList.size > 0)
+                            selectedHobbyList.remove(model?.HN)
+                        Log.e("TAG","Removed: "+ (model?.HN ?: "null"))
+                    }else{
+                        selectedHobbyList.add(model!!.HN)
+                        Log.e("TAG","count: "+selectedHobbyList.count()+" "+model.HN)
+                    }
+                }
             }
 
             override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): HobbiesSelectionViewHolder {
