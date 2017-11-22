@@ -21,7 +21,7 @@ import msapps.android.app.kcf.firebaseMappingClasses.Hobbies
 class ScreenTwoFragment : Fragment() {
     lateinit var view1 : View
     lateinit var rv_hobbies : RecyclerView
-    var selectedHobbyList : ArrayList<String> = arrayListOf()
+    var selectedHobbyList : MutableList<String>?  = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,12 +48,17 @@ class ScreenTwoFragment : Fragment() {
                         true
                     }
                     if(isVisible){
-                        if(selectedHobbyList != null && selectedHobbyList.size > 0)
-                            selectedHobbyList.remove(model?.HN)
+                        if(selectedHobbyList != null && selectedHobbyList!!.size > 0)
+                            selectedHobbyList?.remove(model?.HN)
                         Log.e("TAG","Removed: "+ (model?.HN ?: "null"))
                     }else{
-                        selectedHobbyList.add(model!!.HN)
-                        Log.e("TAG","count: "+selectedHobbyList.count()+" "+model.HN)
+                        if(selectedHobbyList == null)
+                            selectedHobbyList = mutableListOf()
+                        model?.let {
+                            selectedHobbyList?.add(model.HN)
+                            Log.e("TAG","count: "+selectedHobbyList?.count()+" "+model.HN)
+                        }
+
                     }
                 }
             }
