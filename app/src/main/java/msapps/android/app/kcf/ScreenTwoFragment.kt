@@ -2,6 +2,8 @@ package msapps.android.app.kcf
 
 
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,6 +14,7 @@ import android.view.ViewGroup
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.activity_main.*
 import msapps.android.app.kcf.firebaseMappingClasses.Hobbies
 
 
@@ -49,13 +52,13 @@ class ScreenTwoFragment : Fragment() {
                     }
                     if(isVisible){
                         if(selectedHobbyList != null && selectedHobbyList!!.size > 0)
-                            selectedHobbyList?.remove(model?.HN)
+                            selectedHobbyList?.remove(getRef(position).key)
                         Log.e("TAG","Removed: "+ (model?.HN ?: "null"))
                     }else{
                         if(selectedHobbyList == null)
                             selectedHobbyList = mutableListOf()
                         model?.let {
-                            selectedHobbyList?.add(model.HN)
+                            selectedHobbyList?.add(getRef(position).key)
                             Log.e("TAG","count: "+selectedHobbyList?.count()+" "+model.HN)
                         }
 
@@ -70,6 +73,26 @@ class ScreenTwoFragment : Fragment() {
         }
 
         rv_hobbies.adapter = hobbiesAdapter
+        activity.fab.setOnClickListener{
+            if(selectedHobbyList?.size == 0){
+                Snackbar.make(view1,"Select at least 1 hobby!", Snackbar.LENGTH_SHORT).show()
+            }else{
+                var result = HashMap<String, Any>()
+                for(hobby in selectedHobbyList!!.iterator()){
+                    var hobbyMap = HashMap<String, Long>()
+                    hobbyMap.put("TS", System.currentTimeMillis())
+                    result.put(hobby, hobbyMap)
+                }
+                FirebaseDatabase.getInstance().reference
+                        .child("USER")
+                        .child(PreferenceManager.getDefaultSharedPreferences(activity).getString("ID", "0"))
+                        .child("hobbies")
+                        .setValue(result)
+                Snackbar.make(view1, "Data saved successfully!",Snackbar.LENGTH_SHORT).show()
+                (activity as MainActivity).switchFragment(ScreenThreeFragment(),"ScreenThreeFragment")
+            }
+
+        }
         return view1
     }
 

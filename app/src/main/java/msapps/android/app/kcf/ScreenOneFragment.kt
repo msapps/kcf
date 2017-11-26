@@ -2,6 +2,7 @@ package msapps.android.app.kcf
 
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -36,6 +37,7 @@ class ScreenOneFragment : Fragment() {
                 user.name = etxt_name.text.trim().toString()
                 user.mobNo = etxt_mob_no.text.trim().toString().toLong()
                 user.gender = selectedGender
+                PreferenceManager.getDefaultSharedPreferences(activity).edit().putString("ID", etxt_id.text.trim().toString()).commit()
                 FirebaseDatabase.getInstance().reference.child("USER")
                         .child(etxt_id.text.trim().toString())
                         .setValue(user)
